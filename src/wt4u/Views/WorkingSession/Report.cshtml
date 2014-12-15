@@ -1,0 +1,153 @@
+﻿@model dynamic
+@using wt4u.Models
+
+<h2>General Report</h2>
+
+<h4>Workingtime per Project</h4>
+
+<div class="container">
+    <div class="col-md-6">
+        <table id="timePerProject" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Project</th>
+                    <th>Time(h)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (dynamic item in ViewBag.Projects)
+                {
+                    <tr class="item">
+                        <td><span class="name">@item.Name</span></td>
+                        <td><span class="time">@String.Format("{0:00}:{1:00}:{2:00}", (int)@item.Duration.TotalHours, @item.Duration.Minutes, @item.Duration.Seconds)</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-6">
+        <div id="workTimeProjectChartContainer" style="max-width:800px;height: 400px;"></div>
+    </div>
+</div>
+
+<hr />
+
+<h4>Time per Day</h4>
+
+<div class="container">
+    <div class="col-md-4">
+        <table id="timePerDay" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    <th>Time(h)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (dynamic item in ViewBag.DayTime)
+                {
+                    <tr class="item">
+                        <td><span class="name">@item.Day</span></td>
+                        <td><span class="time">@String.Format("{0:00}:{1:00}:{2:00}", (int)@item.DayTime.TotalHours, @item.DayTime.Minutes, @item.DayTime.Seconds)</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-8">
+        <div id="workTimeDayChartContainer" style="max-width:800px;height: 400px;"></div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script type="text/javascript">
+        function createWorkTimeProjectChart() {
+            var chartDataSource = [];
+            $("table#timePerProject tr.item").each(function () {
+                $this = $(this)
+                var namevalue = $this.find("span.name").html();
+                var str = $this.find("span.time").html();
+                str = str.substring(0, 8);
+                var values = str.split(':');
+                var timeValue = parseInt(3600 * values[0]) + parseInt(60 * values[1]) + parseInt(values[2]);
+                chartDataSource.push({ name: namevalue, value: parseInt(timeValue) });
+            });
+
+            $("#workTimeProjectChartContainer").dxPieChart({
+                dataSource: chartDataSource,
+
+                series: {
+                    argumentField: 'name',
+                    valueField: 'value'
+                },
+                tooltip: {
+                    enabled: true,
+                    percentPrecision: 2,
+                    customizeText: function (value) {
+                        return value.percentText;
+                    }
+                },
+                title: {
+                    text: 'Time per Project'
+                },
+                legend: {
+                    orientation: "horizontal",
+                    itemTextPosition: "right",
+                    horizontalAlignment: "right",
+                    verticalAlignment: "bottom",
+                    rowCount: 4
+                }
+            });
+        }
+
+        function createWorkTimeDayChart() {
+            var chartDataSource = [];
+            $("table#timePerDay tr.item").each(function () {
+                $this = $(this)
+                var namevalue = $this.find("span.name").html();
+                var str = $this.find("span.time").html();
+                str = str.substring(0, 8);
+                var values = str.split(':');
+                var timeValue = parseInt(3600 * values[0]) + parseInt(60 * values[1]) + parseInt(values[2]);
+                chartDataSource.push({ name: namevalue, value: parseInt(timeValue) });
+            });
+
+            $("#workTimeDayChartContainer").dxPieChart({
+                dataSource: chartDataSource,
+
+                series: {
+                    argumentField: 'name',
+                    valueField: 'value'
+                },
+                tooltip: {
+                    enabled: true,
+                    percentPrecision: 2,
+                    customizeText: function (value) {
+                        return value.percentText;
+                    }
+                },
+                title: {
+                    text: 'Time per Day'
+                }
+            });
+        }
+
+        function createTables() {
+            $('#timePerProject').dataTable({
+                "iDisplayLength": 10,
+                "bLengthChange": false,
+                "bFilter": false,
+                "bInfo": false
+            });
+        }
+
+
+        $(document).ready(function () {            
+            createWorkTimeProjectChart();
+            createWorkTimeDayChart();
+            createTables();            
+        });
+
+    </script>
+}

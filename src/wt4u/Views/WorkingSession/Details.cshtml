@@ -1,0 +1,183 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>WorkingSession @ViewBag.WorkingSession.WorkingSessionId</h2>
+<hr />
+
+<div>
+    <dl class="dl-horizontal">
+        <dt>Userinfo</dt>
+        <dd>@ViewBag.WorkingSession.Employee.Name @ViewBag.WorkingSession.Employee.FirstName (@ViewBag.WorkingSession.Employee.UserName)</dd>
+
+        <dt>Start</dt>
+        <dd>@ViewBag.WorkingSession.Start</dd>
+
+        <dt>End</dt>
+        <dd>@ViewBag.WorkingSession.End</dd>
+
+        <dt>Total WorkingTime</dt>
+        <dd>@String.Format("{0:00}:{1:00}:{2:00}", (int)@ViewBag.WorkingTime.TotalHours, @ViewBag.WorkingTime.Minutes, @ViewBag.WorkingTime.Seconds)</dd>
+
+        <dt>Total BreakTime</dt>
+        <dd>@String.Format("{0:00}:{1:00}:{2:00}", (int)@ViewBag.BreakTime.TotalHours, @ViewBag.BreakTime.Minutes, @ViewBag.BreakTime.Seconds)</dd>
+
+        <dt>Total ProjectBookingTime</dt>
+        <dd>@String.Format("{0:00}:{1:00}:{2:00}", (int)@ViewBag.ProjectBookingTime.TotalHours, @ViewBag.ProjectBookingTime.Minutes, @ViewBag.ProjectBookingTime.Seconds)</dd>
+    </dl>
+    <hr />
+</div>
+
+<h4>ProjectBookings during WorkingSession</h4>
+<table id="bookings" class="table">
+    <thead>
+        <tr>
+            <th>Booking ID</th>
+            <th>Project Name</th>
+            <th>Project ID</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Duration</th>
+            <th>Description</th>
+            @if (HttpContext.Current.User.IsInRole("Employer"))
+            {
+                <th></th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (dynamic item in ViewBag.Projects)
+        {
+            <tr>
+                <td>@item.BookingId</td>
+                <td>@item.ProjectName</td>
+                <td>@item.ProjectId</td>
+                <td>@item.Start</td>
+                <td>@item.End</td>
+                <td>@String.Format("{0:00}:{1:00}:{2:00}", (int)@item.Time.TotalHours, @item.Time.Minutes, @item.Time.Seconds)</td>
+                <td>@item.Description</td>
+                @if (HttpContext.Current.User.IsInRole("Employer"))
+                {
+                    <td>
+                        <div id="edit_delete_Booking_@item.BookingId" style="width:75px;" class="text-right">
+                            <a href="~/Project/EditBooking/@item.BookingId"><i class="glyphicon smaller glyphicon-pencil"></i></a>
+                            <a onclick="showDeleteBooking(@item.BookingId)" href="javascript:void(0)"><i class="glyphicon smaller glyphicon-trash"></i></a>
+                        </div>
+                        <div id="deleteBooking_@item.BookingId" style="width:75px;">
+                            @using (Html.BeginForm("DeleteBooking", "WorkingSession", new { id = item.BookingId }))
+                            {
+                                <p>Delete Booking?</p>
+                                <div class="btn-group">
+                                    <button class="btn btn-default" type="submit"><i class="glyphicon smaller glyphicon-thumbs-up btn-thumbs-up"></i></button>
+                                    <button onclick="hideDeleteBooking(@item.BookingId)" type="button" class="btn btn-default"><i class="glyphicon smaller glyphicon-thumbs-down btn-thumbs-down"></i></button>
+                                </div>
+                            }
+                        </div>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+<hr />
+<h4>Breaks during WorkingSession</h4>
+<table id="breaks" class="table">
+    <thead>
+        <tr>
+            <th>Break ID</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Duration</th>
+            @if (HttpContext.Current.User.IsInRole("Employer"))
+            {
+                <th></th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (dynamic item in ViewBag.Breaks)
+        {
+            <tr>
+                <td>@item.BreakId</td>
+                <td>@item.Start</td>
+                <td>@item.End</td>
+                <td>@String.Format("{0:00}:{1:00}:{2:00}", (int)@item.Time.TotalHours, @item.Time.Minutes, @item.Time.Seconds)</td>
+                @if (HttpContext.Current.User.IsInRole("Employer"))
+                {
+                    <td>
+                        <div id="edit_delete_Break_@item.BreakId" style="width:75px;" class="text-right">
+                            <a href="~/WorkingSession/EditBreak/@item.BreakId"><i class="glyphicon smaller glyphicon-pencil"></i></a>
+                            <a onclick="showDeleteBreak(@item.BreakId)" href="javascript:void(0)"><i class="glyphicon smaller glyphicon-trash"></i></a>
+                        </div>
+                        <div id="deleteBreak_@item.BreakId" style="width:75px;">
+                            @using (Html.BeginForm("DeleteBreak", "WorkingSession", new { id = item.BreakId }))
+                            {
+                                <p>Delete Break?</p>
+                                <div class="btn-group">
+                                    <button class="btn btn-default" type="submit"><i class="glyphicon smaller glyphicon-thumbs-up btn-thumbs-up"></i></button>
+                                    <button onclick="hideDeleteBreak(@item.BreakId)" type="button" class="btn btn-default"><i class="glyphicon smaller glyphicon-thumbs-down btn-thumbs-down"></i></button>
+                                </div>
+                            }
+                        </div>
+                    </td>
+                }
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<p>
+    @Html.ActionLink("Back to List", "Index")
+</p>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("div[id^='deleteBooking_']").hide();
+            $("div[id^='deleteBreak_']").hide();
+
+            $('#bookings').dataTable({
+                "iDisplayLength": 10,
+                "order": [[ 0, "desc" ]],
+                "aoColumnDefs": [
+                    { 'bSortable': false, 'aTargets': [6] }
+                ]
+            });
+
+            $('#breaks').dataTable({
+                "iDisplayLength": 10,
+                "order": [[ 0, "desc" ]],
+                "aoColumnDefs": [
+                    { 'bSortable': false, 'aTargets': [4] }
+                ]
+            });
+        });
+
+        function hideDeleteBooking(id) {
+            $("#" + "deleteBooking_" + id).hide();
+            $("#" + "edit_delete_Booking_" + id).show();
+        }
+
+        function showDeleteBooking(id) {
+            $("#" + "deleteBooking_" + id).show();
+            $("#" + "edit_delete_Booking_" + id).hide();
+        }
+
+        function hideDeleteBreak(id) {
+            $("#" + "deleteBreak_" + id).hide();
+            $("#" + "edit_delete_Break_" + id).show();
+        }
+
+        function showDeleteBreak(id) {
+            $("#" + "deleteBreak_" + id).show();
+            $("#" + "edit_delete_Break_" + id).hide();
+        }
+    </script>
+}
+
+

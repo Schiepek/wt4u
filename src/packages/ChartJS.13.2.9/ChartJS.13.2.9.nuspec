@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>ChartJS</id>
+    <version>13.2.9</version>
+    <title>ChartJS</title>
+    <authors>Developer Express Inc.</authors>
+    <owners>Developer Express Inc.</owners>
+    <licenseUrl>http://chartjs.devexpress.com/EULA</licenseUrl>
+    <projectUrl>http://chartjs.devexpress.com/</projectUrl>
+    <iconUrl>http://cdn3.devexpress.com/jslib/jslogo-32.png</iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>ChartJS - JavaScript Charting and Visualization library. Whether you are creating traditional websites, sites that target mobile devices, or native apps built with HTML5 JavaScript and compiled with Apache Cordova (PhoneGap), ChartJS provides high-performance and elegant data visualization options for all your business intelligence needs. ChartJS ships with multiple chart types and built-in dashboard elements including gauges and range selector.</description>
+    <summary>ChartJS - JavaScript Charting and Visualization library.</summary>
+    <releaseNotes>See on our site http://chartjs.devexpress.com/Blog/Whats-New-13-2-9</releaseNotes>
+    <copyright>Copyright © 2012-2013 Developer Express Inc.</copyright>
+    <tags>chart gauge javascript visualization</tags>
+    <dependencies>
+      <dependency id="jQuery" version="1.9.1" />
+      <dependency id="jquery-globalize" version="0.1.1" />
+    </dependencies>
+  </metadata>
+</package>

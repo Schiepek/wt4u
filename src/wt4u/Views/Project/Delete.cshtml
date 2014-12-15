@@ -1,0 +1,88 @@
+﻿@model wt4u.Models.Project
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete @Html.DisplayFor(model => model.Name)</h2>
+
+@if (@ViewBag.Bookings.Count > 0)
+{
+    <h4>Please consider that there are no Bookings on @Html.DisplayFor(model => model.Name).</h4>
+    <p>Following Bookings are on the Project:</p>
+    <table id="bookings" class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Start</th>
+                <th>Ende</th>
+                <th>Description</th>
+                <th>Employee</th>
+
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (wt4u.Models.ProjectBookingTime p in ViewBag.Bookings)
+            {
+                <tr>
+                    <td>@p.BookingId</td>
+                    <td>@p.Start</td>
+                    <td>@p.End</td>
+                    <td>@p.Description</td>
+                    <td>@p.WorkingSession.Employee.Name @p.WorkingSession.Employee.FirstName (@p.WorkingSession.Employee.UserName)</td>
+                </tr>
+            }
+
+
+
+        </tbody>
+    </table>
+
+}
+else
+{
+    <h3>Are you sure you want to delete @Html.DisplayFor(model => model.Name)?</h3>
+    <div>
+        <h4>Project</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.StartDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.StartDate)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.EndDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.EndDate)
+            </dd>
+
+        </dl>
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-actions no-color">
+                <input type="submit" value="Delete" class="btn btn-default" /> |
+                @Html.ActionLink("Back to List", "Index")
+            </div>
+        }
+    </div>
+}
+
+

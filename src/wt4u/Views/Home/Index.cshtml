@@ -1,0 +1,97 @@
+﻿@model wt4u.Models.WorkingSession
+
+@{
+    ViewBag.Title = "wt4u";
+}
+
+<br/>
+@if (ViewBag.Error != "")
+{   <div class="alert alert-danger">
+        @ViewBag.Error
+    </div>
+}
+
+
+@using (Html.BeginForm("CheckInOut", "Home", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class="panel panel-default">
+        <div class="panel-heading"><h4>WorkingSession</h4></div>
+        <div class="panel-body">
+            <div class="form-horizontal" id="checkinForm">
+                <div class="form-group">
+                    <div class="col-md-offset-0 col-md-10">
+                        @if (!ViewBag.IsWorking)
+                        {<input id="btnStartWorkingSession" type="submit" name="checkButton" value="Start" class="btn btn-lg btn-success" /> }
+                        @if (ViewBag.IsWorking)
+                        {<input id="btnStopWorkingSession" type="submit" name="checkButton" value="End" class="btn btn-lg btn-danger" /> }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@using (Html.BeginForm("BreakCheckInOut", "Home", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    if (ViewBag.IsWorking)
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4>Break</h4></div>
+            <div class="panel-body">
+                <div id="breakForm" class="form-horizontal">
+
+                    <div class="form-group">
+                        <div class="col-md-offset-0 col-md-10">
+                            @if (!ViewBag.IsInBreak)
+                            {<input id="btnStartBreak" type="submit" name="breakButton" value="Start" class="btn btn-lg btn-success" /> }
+                            @if (ViewBag.IsInBreak)
+                            {<input id="btnStopBreak" type="submit" name="breakButton" value="End" class="btn btn-lg btn-danger" /> }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@using (Html.BeginForm("ProjectCheckInOut", "Home", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    if (ViewBag.IsWorking && !ViewBag.IsInBreak)
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4>Project</h4></div>
+            <div class="panel-body">
+                <div id="projectForm" class="form-horizontal">
+
+                    @if (!ViewBag.IsInProjectBookingTime)
+                    {
+                        @Html.DropDownList("ProjectID", (IEnumerable<SelectListItem>)@ViewBag.ProjectID, new { @class = "form-control row-md-10" })
+                    }
+
+                    @if (ViewBag.IsInProjectBookingTime)
+                    {
+                        @Html.TextBox("Description", "", new { @class = "form-control row-md-1", @placeholder = "Description" })
+                    }
+                    <div class="form-group">
+                        <div class="col-md-offset-0 col-md-10">
+                            @if (!ViewBag.IsInProjectBookingTime)
+                            {<input type="submit" name="projectButton" value="Start" class="btn btn-lg btn-success" /> }
+                            @if (ViewBag.IsInProjectBookingTime)
+                            {<input type="submit" name="projectButton" value="End" class="btn btn-lg btn-danger" />
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

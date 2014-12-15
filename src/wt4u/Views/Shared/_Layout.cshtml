@@ -1,0 +1,215 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="~/Content/Images/favicon.ico" />
+    <title>@ViewBag.Title - wt4u</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div id="top-nav" class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-text" href="~/Home/Status">
+                    <i class="glyphicon glyphicon-info-sign"></i>
+                    @Html.Action("getStatus", "Home")
+                </a>
+            </div>
+            <div class="navbar-collapse collapse">
+                @if (Request.IsAuthenticated)
+                {
+                    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+
+                        <ul class="nav navbar-nav navbar-right">
+
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-user"></i> @User.Identity.Name <span class="caret"></span></a>
+                                <ul id="g-account-menu" class="dropdown-menu" role="menu">
+                                    <li id="manageEmployee">@Html.ActionLink("My Profile", "Manage", "Account")</li>
+                                </ul>
+                            </li>
+                            <li><a href="javascript:document.getElementById('logoutForm').submit()"><i class="glyphicon glyphicon-off"></i> Logout</a></li>
+
+                        </ul>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="container content">
+        <div class="row  row-top">
+            <div class="col-md-3">
+                <!-- Left column -->
+                <a href="~/"><img src="@Url.Content("~/Content/Images/logo_small.png")" /></a><br /><br />
+                <div id="clock">
+                    <div id="date">
+                    </div>
+                    <div id="time">
+                    </div>
+                </div><br />
+                <a href="~/"><strong><i class="glyphicon glyphicon-home"></i> Home</strong></a>
+
+                <hr>
+
+
+
+                <ul class="list-unstyled">
+                    <li class="nav-header">
+                        <a href="#" data-toggle="collapse" data-target="#userMenu">
+                            <h5><i class="glyphicon glyphicon-time"></i> Working Sessions <i class="toggle glyphicon glyphicon-chevron-down"></i></h5>
+                        </a>
+                        <ul class="list-unstyled collapse in" id="userMenu">
+                            <li><a href="~/WorkingSession/MyWorkingSessions"><i class="glyphicon glyphicon-dashboard"></i> My Working Sessions</a></li>
+                            @if (HttpContext.Current.User.IsInRole("Employer"))
+                            {
+                                <li><a href="~/WorkingSession/Index"><i class="glyphicon glyphicon-list"></i> All Working Sessions</a></li>
+                            }
+                        </ul>
+                    </li>
+                    <li class="nav-header">
+                        <a href="#" data-toggle="collapse" data-target="#menu2">
+                            <h5><i class="glyphicon glyphicon-folder-open"></i> Projects <i class="toggle glyphicon glyphicon-chevron-right"></i></h5>
+                        </a>
+
+                        <ul class="list-unstyled collapse" id="menu2">
+                            @if (HttpContext.Current.User.IsInRole("Employer"))
+                            {
+                                <li><a href="~/Project/Create"><i class="glyphicon glyphicon-plus"></i> new Project</a></li>
+                            }
+                            <li>
+                                <a href="~/Project/MyProjects"><i class="glyphicon glyphicon-book"></i> My Projects</a>
+                            </li>
+                            @if (HttpContext.Current.User.IsInRole("Employer"))
+                            {
+                                <li>
+                                    <a href="~/Project/Index"><i class="glyphicon glyphicon-list"></i> All Projects</a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                    @if (HttpContext.Current.User.IsInRole("Employer"))
+                    {
+                        <li class="nav-header">
+                            <a href="#" data-toggle="collapse" data-target="#menu3">
+                                <h5><i class="glyphicon glyphicon-user"></i> Employees <i class="toggle glyphicon glyphicon-chevron-right"></i></h5>
+                            </a>
+
+                            <ul class="list-unstyled collapse" id="menu3">
+                                <li><a href="~/Account/Register"><i class="glyphicon glyphicon-plus"></i> new Employee</a></li>
+                                <li><a href="~/Account/Users"><i class="glyphicon glyphicon-user"></i> All Employees</a></li>
+                            </ul>
+                        </li>
+                    }
+                    <li class="nav-header">
+                        <a href="#" data-toggle="collapse" data-target="#menu4">
+                            <h5><i class="glyphicon glyphicon-file"></i> Reports <i class="toggle glyphicon glyphicon-chevron-right"></i></h5>
+                        </a>
+                        <ul class="list-unstyled collapse" id="menu4">
+                            @if (HttpContext.Current.User.IsInRole("Employer"))
+                            {
+                                <li><a href="~/WorkingSession/Report/"><i class="glyphicon glyphicon-time"></i> General</a></li>
+                            }                            
+                            <li><a href="~/Project/Report/"><i class="glyphicon glyphicon-folder-open"></i> Project</a></li>
+                            @if (HttpContext.Current.User.IsInRole("Employer"))
+                            {
+                                <li><a href="~/Account/Report/"><i class="glyphicon glyphicon-user"></i> Employee</a></li>
+                            }
+                        </ul>
+                    </li>
+                </ul>
+
+
+                <hr>
+
+            </div><!-- /col-3 -->
+            <div class="col-md-9">
+                @RenderBody()
+            </div>
+
+
+        </div>
+        <div class="row row-bottom text-center">
+            <hr />
+            <p>&copy; @DateTime.Now.Year - wt4u by Tobias Zahner, Richard Schiepek, Dario Andreoli</p>
+        </div>
+
+    </div>
+
+
+    @if (Request.RawUrl.Contains("/Project/Edit/"))
+    {
+        @RenderPage("~/Views/Project/ManageTeam.cshtml")
+    }
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/Scripts/jquery.dataTables.min.js")
+    @Scripts.Render("~/Scripts/jquery.dataTables.bootstrap.js")
+    @Scripts.Render("~/Scripts/globalize/globalize.js")
+    @Scripts.Render("~/Scripts/dx.chartjs.js")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    <script type="text/javascript">
+        (function ($) {
+
+            $.fn.simpleClock = function () {
+
+                var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+                var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+                function getTime() {
+                    var date = new Date(),
+                    hour = date.getHours();
+                    return {
+                        day: weekdays[date.getDay()],
+                        date: date.getDate(),
+                        month: months[date.getMonth()],
+                        year: date.getFullYear(),
+                        hour: appendZero(hour),
+                        minute: appendZero(date.getMinutes()),
+                        second: appendZero(date.getSeconds())
+                    };
+                }
+
+                function appendZero(num) {
+                    if (num < 10) {
+                        return "0" + num;
+                    }
+                    return num;
+                }
+
+                function refreshTime() {
+                    var now = getTime();
+                    $('#date').html(now.day + ', ' + now.date + 'th of ' + now.month + ', ' + now.year);
+                    $('#time').html("<span class='hour'>" + now.hour + "</span>:" + "<span class='minute'>" + now.minute + "</span>:" + "<span class='second'>" + now.second + "</span>");
+                }
+
+                refreshTime();
+                setInterval(refreshTime, 1000);
+
+            };
+        })(jQuery);
+
+
+        $(document).ready(function () {
+            $('[data-toggle=collapse]').click(function () {
+                $(this).find("i.toggle").toggleClass("glyphicon-chevron-right glyphicon-chevron-down");
+            });
+            $("#clock").simpleClock();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "Projects";
+}
+
+<h2>Projects</h2>
+<p class="text-left">
+    <a href="@Url.Action("ExportProjectsToCSV", "Project", new { table = @ViewBag.Table })">
+        <img src="~/Content/Images/csv.png" />
+    </a>
+</p>
+
+<div>
+    <p>
+        <input type="checkbox" id="chkisClosed" name="chkisClosed"> Show closed Projects
+    </p>
+
+    <table id="projects" class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Project Name</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>spent Time</th>
+                <th>Closed</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (dynamic item in ViewBag.Projects)
+            {
+                <tr>
+                    <td>@item.ProjectId</td>
+                    <td>@item.Name</td>
+                    <td>@String.Format("{0:dd/MM/yyyy}", @item.StartDate)</td>
+                    <td>@String.Format("{0:dd/MM/yyyy}", @item.EndDate)</td>
+                    <td>@String.Format("{0:00}:{1:00}:{2:00} Hours", (int)@item.Duration.TotalHours, @item.Duration.Minutes, @item.Duration.Seconds)</td>
+                    <td>@Html.CheckBox("isClosed", (bool)@item.IsClosed, new { @disabled = "disabled" })</td>
+                    @if (@ViewBag.LeadingProjects.Contains(@item.ProjectId) || @ViewBag.isEmployer)
+                    {
+                        <td>
+                            <a href="~/Project/Details/@item.ProjectId" id="details"><i class="glyphicon smaller glyphicon-search"></i></a>
+                            <a href="~/Project/Edit/@item.ProjectId" id="edit"><i class="glyphicon smaller glyphicon-pencil"></i></a>
+                            <a href="~/Project/Delete/@item.ProjectId" id="delete"><i class="glyphicon smaller glyphicon-trash"></i></a>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <a href="~/Project/Details/@item.ProjectId" id="details"><i class="glyphicon smaller glyphicon-search"></i></a>
+                        </td>
+                    }
+
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+</div>
+
+
+@section Scripts {
+    <script type="text/javascript">
+
+        $.fn.dataTableExt.afnFiltering.push(
+        function (oSettings, aData, iDataIndex) {
+            var showClosed = document.getElementById('chkisClosed').checked;
+            var iClose = $(aData[5]);
+            iClose = iClose.attr('checked') == "checked";
+
+            if (!showClosed && iClose) {
+                return false;
+            }
+            return true;
+        }
+        );
+
+        $(document).ready(function () {
+            var oTable = $('#projects').dataTable({
+                "iDisplayLength": 25,
+                "aoColumnDefs": [
+                    { 'bSortable': false, 'aTargets': [-1] }
+                ],
+                "order": [[1, "asc"]]
+            });
+
+            $('#chkisClosed').change(function () { oTable.fnDraw(); });
+
+        });
+
+
+
+    </script>
+}

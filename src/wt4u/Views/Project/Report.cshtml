@@ -1,0 +1,215 @@
+﻿@{
+    ViewBag.Title = "Project Report";
+}
+
+@if (@ViewBag.ProjectId != null)
+{
+    using (Html.BeginForm("Report/", "Project", FormMethod.Get, new { id = "projectForm" }))
+    {
+        <div class="form-horizontal">
+            <br />
+            Select Project:
+            @Html.DropDownList("selectProject", new SelectList(@ViewBag.ProjectList, "Key", "Value", @ViewBag.ProjectId), new { @class = "form-control" })
+        </div>
+    }
+
+    <h2>@ViewBag.ProjectName</h2>
+
+    <div>
+        <dl class="dl-horizontal">
+            <dt>Project Leader</dt>
+            <dd>@ViewBag.ProjectDetails.ProjectLeader</dd>
+
+            <dt>Project Team</dt>
+            <dd>
+                @foreach (String s in @ViewBag.ProjectDetails.ProjectTeam)
+                {
+
+                    @s<br />
+
+                }
+            </dd>
+
+            <dt>Start Date Planned</dt>
+            <dd>@ViewBag.ProjectDetails.StartDate</dd>
+
+            <dt>End Date Planned</dt>
+            <dd>@ViewBag.ProjectDetails.EndDate</dd>
+
+            <dt>Start Date Actual</dt>
+            <dd>@ViewBag.ProjectDetails.StartIst</dd>
+
+            <dt>End Date Actual</dt>
+            <dd>@ViewBag.ProjectDetails.EndIst</dd>
+
+            <dt>Working Time</dt>
+            <dd>@ViewBag.ProjectDetails.Duration</dd>
+
+        </dl>
+        <hr />
+    </div>
+
+    <h4>Time per Employee</h4>
+
+    <table id="timePerEmployee" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (dynamic item in ViewBag.EmployeeTimes)
+            {
+                <tr class="item">
+                    <td><span class="name">@item.Name</span></td>
+                    <td><span class="time">@item.Time</span></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div id="workTimeEmployeeChartContainer" style="max-width:800px;height: 400px;"></div>
+
+    <h4>Time per Month</h4>
+
+    <table id="timePerMonth" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (dynamic item in ViewBag.MonthTimes)
+            {
+                <tr class="item">
+                    <td><span class="name">@item.Month</span></td>
+                    <td><span class="time">@item.Time</span></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div id="workTimeMonthChartContainer" style="max-width:800px;height: 400px;"></div>
+}
+else
+{
+    <div>
+        <br />
+        <p>You can only see Project Reports if you are Project Leader!</p>
+    </div>
+}
+
+
+@section Scripts {
+    <script type="text/javascript">
+        function createWorkTimeEmployeeChart() {
+            var chartDataSource = [];
+            $("table#timePerEmployee tr.item").each(function () {
+                $this = $(this)
+                var namevalue = $this.find("span.name").html();
+                var str = $this.find("span.time").html();
+                str = str.substring(0, 8);
+                var values = str.split(':');
+                var timeValue = parseInt(3600 * values[0]) + parseInt(60 * values[1]) + parseInt(values[2]);
+                chartDataSource.push({ name: namevalue, value: parseInt(timeValue) });
+            });
+
+            $("#workTimeEmployeeChartContainer").dxPieChart({
+                dataSource: chartDataSource,
+
+                series: {
+                    argumentField: 'name',
+                    valueField: 'value'
+                },
+                tooltip: {
+                    enabled: true,
+                    percentPrecision: 2,
+                    customizeText: function (value) {
+                        return value.percentText;
+                    }
+                },
+                title: {
+                    text: 'Time per Employee'
+                }
+            });
+        }
+
+        function createWorkTimeMonthChart() {
+            var chartDataSource = [];
+            $("table#timePerMonth tr.item").each(function () {
+                $this = $(this)
+                var namevalue = $this.find("span.name").html();
+                var str = $this.find("span.time").html();
+                str = str.substring(0, 8);
+                var values = str.split(':');
+                var timeValue = parseInt(3600 * values[0]) + parseInt(60 * values[1]) + parseInt(values[2]);
+                chartDataSource.push({ month: namevalue, time: parseInt(timeValue) });
+            });
+            chartDataSource.reverse();
+
+            $("#workTimeMonthChartContainer").dxChart({
+                dataSource: chartDataSource,
+                commonSeriesSettings: {
+                    type: "spline",
+                    argumentField: "month"
+                },
+                commonAxisSettings: {
+                    grid: {
+                        visible: true
+                    }
+                },
+                series: [
+                    { valueField: "time", name: "Time" }
+                ],
+                valueAxis: {
+                    label: {
+                        customizeText: function () {
+                            var sec_num = parseInt(this.value, 10);
+                            var hours = Math.floor(sec_num / 3600);
+                            var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+                            var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+                            if (hours < 10) { hours = "0" + hours; }
+                            if (minutes < 10) { minutes = "0" + minutes; }
+                            if (seconds < 10) { seconds = "0" + seconds; }
+                            var time = hours + ':' + minutes + ':' + seconds;
+                            return time;
+                        }
+                    }
+                },
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    visible: false,
+                    verticalAlignment: "bottom",
+                    horizontalAlignment: "center"
+                },
+                title: "Time per Month",
+                commonPaneSettings: {
+                    border: {
+                        visible: true,
+                        bottom: false
+                    }
+                }
+            });
+        }
+
+        $("#selectProject").change(function () {
+            var old = $("#projectForm").attr("action");
+            var newAction = old.substring(0, old.lastIndexOf('/') + 1) + $('#selectProject').val();
+            $('#projectForm').get(0).setAttribute('action', newAction);
+            $("#projectForm").submit();
+        });
+
+
+        $(document).ready(function () {
+
+            createWorkTimeEmployeeChart();
+            createWorkTimeMonthChart()
+        });
+
+    </script>
+}

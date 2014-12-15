@@ -1,0 +1,69 @@
+﻿@model dynamic
+@using wt4u.Models
+
+@{
+    ViewBag.Title = "Working Sessions";
+    var Table = ViewBag.Table;
+}
+<h2>Working Sessions</h2>
+<p class="text-left">
+    <a href="@Url.Action("ExportWorkingSessionsToCSV", "WorkingSession", new { table = @ViewBag.Table })">
+        <img src="~/Content/Images/csv.png"/>
+    </a>
+</p>
+<div>
+    <table id="workingsessions" class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Surname</th>
+                <th>Firstname</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>WorkingTime</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (dynamic item in ViewBag.WorkingSessions)
+            {
+                <tr>
+                    <td>@item.WorkingSessionId</td>
+                    <td>@item.UserName</td>
+                    <td>@item.Name</td>
+                    <td>@item.FirstName</td>
+                    <td>@item.Start</td>
+                    <td>@item.End</td>
+                    <td>@String.Format("{0:00}:{1:00}:{2:00}", (int)@item.WorkingTime.TotalHours, @item.WorkingTime.Minutes, @item.WorkingTime.Seconds)</td>
+                    <td style="width:50px">
+                        <a href="~/WorkingSession/Details/@item.WorkingSessionId" id="details"><i class="glyphicon smaller glyphicon-search"></i></a>
+                        @if (HttpContext.Current.User.IsInRole("Employer"))
+                        {
+                            <a href="~/WorkingSession/Edit/@item.WorkingSessionId" id="edit"><i class="glyphicon smaller glyphicon-pencil"></i></a>
+                            <a href="~/WorkingSession/Delete/@item.WorkingSessionId" id="delete"><i class="glyphicon smaller glyphicon-trash"></i></a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#workingsessions').dataTable({
+                "iDisplayLength": 10,
+                "aoColumnDefs": [
+                    { 'bSortable': false, 'aTargets': [7] }
+                ],
+                "order": [[0, "desc"]]
+            });
+        });
+
+    </script>
+
+    
+}

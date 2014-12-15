@@ -1,0 +1,103 @@
+﻿@model IEnumerable<wt4u.Models.ApplicationUser>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Users</h2>
+
+<p>
+    <input type="checkbox" id="chkisActive" name="chkisActive" checked> Show only Active Users
+</p>
+<table id="users" class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.UserName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Address)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ZipCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.City)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.isActive)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FirstName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Address)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ZipCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.City)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.isActive)
+                    </td>
+                    <td>
+                        <a href="~/Account/Details/@item.Id"><i class="glyphicon smaller glyphicon-search"></i></a>
+                        <a href="~/Account/Edit/@item.Id"><i class="glyphicon smaller glyphicon-pencil"></i></a>
+                    </td>
+                </tr>
+        }
+    </tbody>
+
+</table>
+
+@section Scripts {
+    <script type="text/javascript">
+        $.fn.dataTableExt.afnFiltering.push(
+        function (oSettings, aData, iDataIndex) {
+            var onlyActive = document.getElementById('chkisActive').checked;
+            var iActive = $(aData[6]);
+            iActive = iActive.attr('checked') == "checked";
+            if (onlyActive && !iActive) {
+                return false;
+            }
+            return true;
+        }
+        );
+
+
+        $(document).ready(function () {
+            var oTable = $('#users').dataTable({
+                "iDisplayLength": 10,
+                "aoColumnDefs": [
+                    { 'bSortable': false, 'aTargets': [6] }
+                ],
+                "order": [[1, "asc"]]
+            });
+
+            $('#chkisActive').change(function () { oTable.fnDraw(); });
+        });
+
+
+    </script>
+}

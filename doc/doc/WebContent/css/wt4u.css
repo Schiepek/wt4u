@@ -1,0 +1,39 @@
+body {
+  background-image: url("../images/background.jpg");
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.navbar {
+  margin-bottom: 20px;
+}
+
+.row-top {
+    -moz-border-radius: 25px 25px 0px 0px;
+    -webkit-border-radius: 25px 25px 0px 0px;
+    -khtml-border-radius: 25px 25px 0px 0px;
+    border-radius: 25px 25px 0px 0px;
+}
+
+.Image {
+    display: block;
+    margin-left: auto;
+    margin-right: auto
+}
+
+.opacity {
+    opacity: 0.93;
+}
+
+.panel-footer {
+    text-align: center;
+}
+
+.panel-footer img {
+    padding-left: 10px;
+}
+
+.carousel{
+  max-width:600px;
+  margin: 0 auto;
+}

@@ -1,0 +1,25 @@
+﻿@{
+    ViewBag.Title = "Status";
+}
+
+<h1>Status User @User.Identity.Name</h1>
+
+<div class="row">
+    <div class="col-6 col-sm-6 col-lg-4">
+        <h3>WorkingSession</h3>
+        <p>@ViewBag.WorkStatus</p>
+        @if (ViewBag.IsWorking)
+        {
+            <p>Current Workingtime: @String.Format("{0:00}:{1:00}:{2:00}", (int)@ViewBag.CurrentWorkingTime.TotalHours, @ViewBag.CurrentWorkingTime.Minutes, @ViewBag.CurrentWorkingTime.Seconds)</p>
+        }
+        <p>Totaltime: @String.Format("{0:00}d {1:00}:{2:00}:{3:00}", (int)@ViewBag.TotalWorkingTime.TotalDays, @ViewBag.TotalWorkingTime.Hours, @ViewBag.TotalWorkingTime.Minutes, @ViewBag.TotalWorkingTime.Seconds)</p>
+    </div>
+    <div class="col-6 col-sm-6 col-lg-4">
+        <h3>Break</h3>
+        <p>@ViewBag.BreakStatus</p>
+    </div>
+    <div class="col-6 col-sm-6 col-lg-4">
+        <h3>ProjectStatus</h3>
+        <p>@ViewBag.ProjectStatus</p>
+    </div>
+</div>

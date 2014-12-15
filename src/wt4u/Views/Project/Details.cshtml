@@ -1,0 +1,135 @@
+﻿@{
+    ViewBag.Title = "Project Details";
+}
+
+<h2>@ViewBag.ProjectName</h2>
+
+<div>
+    <dl class="dl-horizontal">
+        <dt>Project Leader</dt>
+        <dd>@ViewBag.ProjectDetails.ProjectLeader</dd>
+
+        <dt>Project Team</dt>
+        <dd>
+            @foreach (String s in @ViewBag.ProjectDetails.ProjectTeam)
+            {
+
+                @s<br />
+
+            }
+        </dd>
+
+        <dt>Start Date Planned</dt>
+        <dd>@ViewBag.ProjectDetails.StartDate</dd>
+
+        <dt>End Date Planned</dt>
+        <dd>@ViewBag.ProjectDetails.EndDate</dd>
+
+        <dt>Start Date Actual</dt>
+        <dd>@ViewBag.ProjectDetails.StartIst</dd>
+
+        <dt>End Date Actual</dt>
+        <dd>@ViewBag.ProjectDetails.EndIst</dd>
+
+        <dt>Working Time</dt>
+        <dd>@ViewBag.ProjectDetails.Duration</dd>
+
+    </dl>
+    <hr />
+</div>
+
+@if (HttpContext.Current.User.IsInRole("Employer"))
+{
+    <h4>Bookings on @ViewBag.ProjectName</h4>
+}
+else
+{
+    <h4>My Bookings on @ViewBag.ProjectName</h4>
+}
+<table id="bookings" class="table table-striped">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Working Time</th>
+            <th>Description</th>
+            <th>Employee</th>
+            @if (HttpContext.Current.User.IsInRole("Employer"))
+            {
+                <th class="nosort"></th>
+            }
+
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (dynamic item in ViewBag.ProjectBookingDetails)
+        {
+            <tr>
+                <td>@item.BookingId</td>
+                <td>@String.Format("{0:dd/MM/yyyy HH:mm:ss}", @item.Start)</td>
+                <td>@String.Format("{0:dd/MM/yyyy HH:mm:ss}", @item.End)</td>
+                <td>@String.Format("{0:00}:{1:00}:{2:00} Hours", (int)@item.Duration.TotalHours, @item.Duration.Minutes, @item.Duration.Seconds)</td>
+                <td>@item.Description</td>
+                <td>@item.Name</td>
+                @if (HttpContext.Current.User.IsInRole("Employer"))
+                {
+                    <td>
+                        <div id="edit_delete_Booking_@item.BookingId" style="width:75px;" class="text-right">
+                            <a href="~/Project/EditBooking/@item.BookingId"><i class="glyphicon smaller glyphicon-pencil"></i></a>
+                            <a onclick="showDeleteBooking(@item.BookingId)" href="javascript:void(0)"><i class="glyphicon smaller glyphicon-trash"></i></a>
+                        </div>
+                        <div id="deleteBooking_@item.BookingId" style="width:75px;">
+                            @using (Html.BeginForm("DeleteBooking", "Project", new { id = item.BookingId }))
+                            {
+                                <p>Delete Booking?</p>
+                                <div class="btn-group">
+                                    <button class="btn btn-default" type="submit"><i class="glyphicon smaller glyphicon-thumbs-up btn-thumbs-up"></i></button>
+                                    <button onclick="hideDeleteBooking(@item.BookingId)" type="button" class="btn btn-default"><i class="glyphicon smaller glyphicon-thumbs-down btn-thumbs-down"></i></button>
+                                </div>
+                            }
+                        </div>
+                    </td>
+                }
+
+            </tr>
+        }
+    </tbody>
+
+</table>
+
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("div[id^='deleteBooking_']").hide();
+
+            i = hideColumnCount();
+            $('#bookings').dataTable({
+                "iDisplayLength": 25,
+                "order": [[ 0, "desc" ]],
+                "aoColumnDefs": [
+                    { 'bSortable': false, 'aTargets': ["nosort"] },
+                    { "aTargets": ['_all'], "bSortable": true }
+                ]
+            });
+        });
+
+        function hideColumnCount() {
+            var numCols = $("#bookings").find('tr')[0].cells.length;
+            return numCols - 1;
+        }
+
+        function hideDeleteBooking(id) {
+            $("#" + "deleteBooking_" + id).hide();
+            $("#" + "edit_delete_Booking_" + id).show();
+        }
+
+        function showDeleteBooking(id) {
+            $("#" + "deleteBooking_" + id).show();
+            $("#" + "edit_delete_Booking_" + id).hide();
+        }
+
+    </script>
+}

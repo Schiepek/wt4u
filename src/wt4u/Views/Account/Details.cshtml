@@ -1,0 +1,94 @@
+﻿@{
+    ViewBag.Title = "User Details";
+}
+
+<h2>@ViewBag.User.UserName</h2>
+
+<div>
+    <dl class="dl-horizontal">
+        <dt>User ID</dt>
+        <dd>@ViewBag.User.Id</dd>
+
+        <dt>First Name</dt>
+        <dd>@ViewBag.User.FirstName</dd>
+
+        <dt>Name</dt>
+        <dd>@ViewBag.User.Name</dd>
+
+        <dt>Address</dt>
+        <dd>@ViewBag.User.Address</dd>
+
+        <dt>Zip Code</dt>
+        <dd>@ViewBag.User.ZipCode</dd>
+
+        <dt>City</dt>
+        <dd>@ViewBag.User.City</dd>
+        </dl>
+    <hr />
+</div>
+
+<h4>Allocated Projects</h4>
+<table id="allocations" class="table table-striped">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Project Leader</th>
+            <th>Start</th>
+            <th>Invested Time</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (dynamic item in ViewBag.ProjectAllocations)
+        {
+            <tr>
+                <td>@item.ProjectId</td>
+                <td>@item.Name</td>
+                <td>@item.Leader</td>
+                <td>@String.Format("{0:dd/MM/yyyy HH:mm:ss}", @item.StartDate)</td>
+                <td>@String.Format("{0:00}:{1:00}:{2:00} Hours", (int)@item.UserTime.TotalHours, @item.UserTime.Minutes, @item.UserTime.Seconds)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h4>Working Time</h4>
+<table id="worktingTime" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Month</th>
+            <th>Working Time</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (dynamic item in ViewBag.WorkingTime)
+        {
+            <tr>
+                <td>@item.month</td>
+                <td>@String.Format("{0:00}:{1:00}:{2:00} Hours", (int)@item.workingTime.TotalHours, @item.workingTime.Minutes, @item.workingTime.Seconds)</td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#allocations').dataTable({
+                "iDisplayLength": 10,
+                "order": [[1, "asc"]]
+            });
+
+            $('#worktingTime').dataTable({
+                "iDisplayLength": 10,
+                "order": [[ 0, "desc" ]]
+            });
+
+        });
+
+
+    </script>
+}

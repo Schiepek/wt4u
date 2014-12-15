@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.Owin.de</id>
+    <version>2.1.0</version>
+    <title>Deutsche Ressourcen für Microsoft Owin</title>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <licenseUrl>http://www.microsoft.com/web/webpi/eula/aspnetcomponent_rtw_DEU.htm</licenseUrl>
+    <projectUrl>http://katanaproject.codeplex.com/</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>Dieses Paket enthält die deutschen Satellitenassemblys für Microsoft Owin.</description>
+    <summary>Deutsche Ressourcen für das Paket "Microsoft.Owin"</summary>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <language>de</language>
+    <tags>Microsoft OWIN Katana</tags>
+    <dependencies>
+      <dependency id="Microsoft.Owin" version="[2.1.0]" />
+    </dependencies>
+  </metadata>
+</package>
